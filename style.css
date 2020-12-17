@@ -2,6 +2,7 @@ body {
   font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
   margin: 0;
   overflow-x: hidden;
+  font-size: 200%;
 }
 
 header {
@@ -12,13 +13,29 @@ header {
 h1 {
   flex-grow: 1;
   text-align: center;
-  margin: 0 1vw;
-  font-size: 6vw;
+  margin: 0 0.5em;
+  font-size: 200%;
 }
 
 #topright > img {
-  top: 0.5vw;
-  right: 0.5vw;
-  height: 8vw;
+  right: 0;
+  height: 3em;
   filter: invert(82%) sepia(14%) saturate(17%) hue-rotate(314deg) brightness(94%) contrast(87%);
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table, td, th {
+  border: 1px solid lightgray;
+  position: relative;
+}
+
+td, th, button {
+  padding: 5px;
+}
+
+button {
+  font-size: 100%;
 }
