@@ -1,0 +1,24 @@
+body {
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+header {
+  display: flex;
+  align-items: center;
+}
+
+h1 {
+  flex-grow: 1;
+  text-align: center;
+  margin: 0 1vw;
+  font-size: 6vw;
+}
+
+#topright > img {
+  top: 0.5vw;
+  right: 0.5vw;
+  height: 8vw;
+  filter: invert(82%) sepia(14%) saturate(17%) hue-rotate(314deg) brightness(94%) contrast(87%);
+}
