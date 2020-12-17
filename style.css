@@ -1,5 +1,5 @@
 body {
-  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  font-family: monospace;
   margin: 0;
   overflow-x: hidden;
   font-size: 200%;
@@ -29,13 +29,15 @@ table {
 
 table, td, th {
   border: 1px solid lightgray;
-  position: relative;
 }
 
-td, th, button {
+td, th {
   padding: 5px;
 }
 
 button {
   font-size: 100%;
+  background-color: #444;
+  font-family: monospace;
+  color: white;
 }

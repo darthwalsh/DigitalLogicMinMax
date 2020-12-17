@@ -69,8 +69,10 @@ class Nand {
 /** @param {Gate} g */
 function table(g) {
   const w = 2 ** DIM;
-  const table = Array(w).fill().map((_, i) => g.eval(Array(w).fill().map((_, j) => Boolean(i & (2**j)))));
-  return table.map(Number).join('');
+  const rows = Array(w).fill().map((_, i) => g.eval(
+    Array(DIM).fill().map((_, j) => Boolean(i & (2**j))).reverse()
+  ));
+  return rows.map(Number).join('');
 }
 
 function find() {
@@ -82,11 +84,7 @@ function find() {
   while (toSearch.length) {
     const [next] = toSearch.splice(0, 1);
     const t = table(next);
-    if (map.has(t)) {
-//       console.log("skipping " + next + " with " + t);
-      continue;
-    }
-    console.log("using " + next + " with " + t);
+    if (map.has(t)) continue;
     map.set(t, next);
 
     for (const x of map.values()) {
@@ -110,24 +108,40 @@ function draw() {
   const topLeft = create(top, 'td');
   const less = create(topLeft, 'button');
   less.innerText = '-';
+  less.onclick = () => {
+    if(DIM) --DIM;
+    draw();
+  };
   const more = create(topLeft, 'button');
   more.innerText = '+';
+  more.onclick = () => {
+    ++DIM;
+    draw();
+  };
 
   for (let r = 0; r < 2**DIM; ++r) {
     const tr = create(table, "tr");
-    for (let i = 0; i < DIM; ++i) {
+    for (let i = DIM - 1; i >= 0; --i) {
       const td = create(tr, "td");
       td.innerText = +Boolean(r & (2**i));
     }
     const th = create(tr, "th");
-    const button = create(th, "button");
-    button.innerText = "0";
+    const b = create(th, "button");
+    b.innerText = "0";
+    b.onclick = () => {
+      b.innerText = 1 - b.innerText;
+      code(findMap);
+    }
   }
+
+  const findMap = find();
+  code(findMap);
+}
+
+function code(findMap) {
+  const lookup = [...$("table").querySelectorAll('BUTTON')].slice(2).map(e => e.innerText).join('');
+  $('output').innerText = findMap.get(lookup);
 }
 
 draw();
-find();
 
-// TODO wire up less more
-// TODO draw puts the buttons backwards
-// TODO pick find from the number of cells
