@@ -17,6 +17,10 @@ function create(parent, name, attributes = {}) {
   return node;
 }
 
+function A(i) {
+  return String.fromCharCode(i + 'A'.charCodeAt(0))
+}
+
 let DIM = 2;
 
 /**
@@ -40,7 +44,7 @@ class Input {
   }
 
   toString() {
-    return String.fromCharCode(this.i + 'A'.charCodeAt(0));
+    return A(this.i);
   }
 }
 
@@ -77,6 +81,8 @@ function table(g) {
 
 function find() {
   const toSearch = Array(DIM).fill().map((_, i) => new Input(i));
+  const inputs = toSearch.slice();
+
   toSearch.splice(DIM, 0, ...toSearch.map(g => new Nand(g, g)));
   
   /** @type {Map<string, Gate>} */
@@ -94,7 +100,7 @@ function find() {
     toSearch.sort((a, b) => a.nands - b.nands);
   }
 
-  return map;
+  return [inputs, map];
 }
 
 function draw() {
@@ -103,7 +109,7 @@ function draw() {
   const top = create(table, "tr");
   for (let i = 0; i < DIM; ++i) {
     const th = create(top, "th");
-    th.innerText = String.fromCharCode(i + 'A'.charCodeAt(0));
+    th.innerText = A(i);
   }
   const topLeft = create(top, 'td');
   const less = create(topLeft, 'button');
@@ -130,17 +136,60 @@ function draw() {
     b.innerText = "0";
     b.onclick = () => {
       b.innerText = 1 - b.innerText;
-      code(findMap);
+      code(...findResults);
     }
   }
 
-  const findMap = find();
-  code(findMap);
+  const findResults = find();
+  code(...findResults);
 }
 
-function code(findMap) {
+/** 
+ * @param {Input[]} inputs 
+ * @param {Map<string, Gate>} findMap 
+ */
+function code(inputs, findMap) {
   const lookup = [...$("table").querySelectorAll('BUTTON')].slice(2).map(e => e.innerText).join('');
-  $('output').innerText = findMap.get(lookup);
+  const gate = findMap.get(lookup);
+
+  /** @type {Map<Gate, string>} */
+  const names = new Map(inputs.map(g => [g, g.toString()]));
+  giveNames(names, gate);
+
+  const rows = [gate.toString()];
+  rows.push('');
+  rows.push('DEF GATE');
+
+  for (const [g, net] of names.entries()) {
+    if (g instanceof Input) {
+      rows.push(`  PORT IN ${net}`);
+    }
+    else if (g === gate) {
+      rows.push(`  PORT OUT ${net}`);
+    } else {
+      rows.push(`  NET ${net}`);
+    }
+  }
+
+  let i = 0;
+  for (const [g, net] of names.entries()) {
+    if (g instanceof Input) continue;
+    rows.push(`  INST NAND${i++} NAND ${names.get(g.x)} ${names.get(g.y)} ${net}`);
+  }
+
+  rows.push('ENDDEF');
+  $('output').innerText = rows.join('\n');
+}
+
+/**
+ * @param {Map<Gate, string>} names 
+ * @param {Gate} gate 
+ */
+function giveNames(names, gate) {
+  if (names.has(gate)) return;
+  giveNames(names, gate.x);
+  giveNames(names, gate.y);
+  names.set(gate, A(names.size));
 }
 
 draw();
