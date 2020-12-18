@@ -152,6 +152,11 @@ function code(inputs, findMap) {
   const lookup = [...$("table").querySelectorAll('BUTTON')].slice(2).map(e => e.innerText).join('');
   const gate = findMap.get(lookup);
 
+  if (gate instanceof Input) {
+    $('output').innerText = `?!? No gate needed, just connect ${gate}`;
+    return;
+  }
+
   /** @type {Map<Gate, string>} */
   const names = new Map(inputs.map(g => [g, g.toString()]));
   giveNames(names, gate);
